@@ -1,93 +1,76 @@
 <!doctype html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
     <title>3Points</title>
     <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
-    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.1&key=您申请的key值"></script>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.1&key=您的key值"></script>
     <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
 </head>
+
 <body>
-<div id="container"></div>
-<div id="myPageTop">
-    <table>
-        <tr>
-            <td>
-                <label>半径：</label>
-            </td>
-            <td class="column2">
-                <label>lng：</label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <input type="text" placeholder="单位：km" id="radius" onchange="getRad()">
-            </td>
-            <td class="column2">
-                <input type="text" readonly="true" id="lng">
-            </td>
-        </tr>
-        <tr>
-            <td>
-                
-            </td>
-            <td class="column2">
-                <label>lat：</label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                
-            </td>
-            <td class="column2">
-                <input type="text" readonly="true" id="lat">
-            </td>
-        </tr>
-    </table>
-</div>
-<script type="text/javascript">
-    //初始化地图对象，加载地图
-    var map = new AMap.Map("container", {
-        resizeEnable: true,
-        zoom:12
-    });
+    <div id="container"></div>
 
-    //为地图注册click事件获取鼠标点击出的经纬度坐标
-    var clickEventListener1 = map.on('click', function(e) {
-        x=e.lnglat.getLng();
-        y=e.lnglat.getLat();
-        document.getElementById("lng").value =x;
-        document.getElementById("lat").value =y;
-    });
+    <div id="myPageTop">
+        <table>
+            <tr>
+                <td><label>半径：</label></td>
+                <td class="column2"><label>lng：</label></td>
+                <td class="column2"><label>lat：</label></td>
+            </tr>
+            <tr>
+                <td><input type="text" placeholder="单位：km" id="radius" onchange="getRad()"></td>
+                <td class="column2"><input type="text" id="lng" placeholder="手动输入经度"></td>
+                <td class="column2"><input type="text" id="lat" placeholder="手动输入纬度"></td>
+            </tr>
+            <tr>
+                <td colspan="3"><button onclick="drawCircle()">绘制圆</button></td>
+            </tr>
+        </table>
+    </div>
 
-    //半径
-    var rad=document.getElementById("radius").value;
-    function getRad() {
-        rad=document.getElementById("radius").value;
-    };
-
-    //draw
-    map.on('click', function(e) {
-        var circle = new AMap.Circle({
-            center: new AMap.LngLat(x,y),// 圆心位置
-            radius: rad*1000, //半径
-            strokeColor: "#3AF", //线颜色
-            strokeOpacity: 1, //线透明度
-            strokeWeight: 2, //线粗细度
-            fillColor: "#3AF", //填充颜色
-            fillOpacity: 0.25,//填充透明度
-            bubble:true
+    <script type="text/javascript">
+        var map = new AMap.Map("container", {
+            resizeEnable: true,
+            zoom: 12
         });
-        circle.setMap(map);
-        //绑定右键移除
-        circle.on('rightclick',function () {
-            circle.setMap();
-        });
-    });
-    
-    map.setFitView();
-</script>
+
+        var rad = 0;
+        function getRad() {
+            rad = document.getElementById("radius").value;
+        }
+
+        function drawCircle() {
+            var lng = parseFloat(document.getElementById("lng").value);
+            var lat = parseFloat(document.getElementById("lat").value);
+            if (isNaN(lng) || isNaN(lat)) {
+                alert("请输入有效的经纬度");
+                return;
+            }
+
+            var circle = new AMap.Circle({
+                center: new AMap.LngLat(lng, lat), // 圆心位置
+                radius: rad * 1000, // 半径（单位：米）
+                strokeColor: "#3AF", // 线颜色
+                strokeOpacity: 1, // 线透明度
+                strokeWeight: 2, // 线粗细度
+                fillColor: "#3AF", // 填充颜色
+                fillOpacity: 0.25, // 填充透明度
+                bubble: true
+            });
+
+            circle.setMap(map);
+
+            // 右键单击移除圆
+            circle.on('rightclick', function () {
+                circle.setMap(null);
+            });
+        }
+
+        map.setFitView();
+    </script>
 </body>
 </html>
