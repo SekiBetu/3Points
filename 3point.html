@@ -4,9 +4,29 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
-    <title>3Points</title>
-    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width, height=device-height">
+    <title>手动输入或点击获取经纬度</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #container {
+            width: 100%;
+            height: 100%;
+        }
+        #myPageTop {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: white;
+            padding: 10px;
+            z-index: 1000;
+            border-radius: 5px;
+        }
+    </style>
     <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.1&key=您的key值"></script>
     <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
 </head>
@@ -39,13 +59,26 @@
         });
 
         var rad = 0;
+        var lng = 0;
+        var lat = 0;
+
+        // 点击获取经纬度
+        var clickEventListener = map.on('click', function (e) {
+            lng = e.lnglat.getLng();
+            lat = e.lnglat.getLat();
+            document.getElementById("lng").value = lng;
+            document.getElementById("lat").value = lat;
+        });
+
         function getRad() {
             rad = document.getElementById("radius").value;
         }
 
+        // 手动绘制圆
         function drawCircle() {
-            var lng = parseFloat(document.getElementById("lng").value);
-            var lat = parseFloat(document.getElementById("lat").value);
+            lng = parseFloat(document.getElementById("lng").value);
+            lat = parseFloat(document.getElementById("lat").value);
+
             if (isNaN(lng) || isNaN(lat)) {
                 alert("请输入有效的经纬度");
                 return;
@@ -73,4 +106,5 @@
         map.setFitView();
     </script>
 </body>
+
 </html>
